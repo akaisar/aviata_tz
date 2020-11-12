@@ -1,0 +1,6 @@
+#!/bin/bash
+
+find . -type f -name "*.py[co]" -delete
+find . -type d -name "__pycache__" -delete
+
+uvicorn app.main:app --workers 4 --reload --host 0.0.0.0 --port 80

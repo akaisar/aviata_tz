@@ -1,0 +1,7 @@
+#!/bin/bash
+
+find . -type f -name "*.py[co]" -delete
+find . -type d -name "__pycache__" -delete
+
+python /app/app/celeryworker_pre_start.py
+celery worker -A app.worker -B -l info

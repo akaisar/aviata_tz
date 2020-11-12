@@ -1,0 +1,47 @@
+version: '3.7'
+
+volumes:
+  local_postgres_data: {}
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    command: /start
+    env_file:
+      - .env-test
+    ports:
+    - "8000:80"
+    volumes:
+    - ./app:/app
+
+  celeryworker:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    command: /start-celeryworker
+    env_file:
+      - .env-test
+    volumes:
+    - ./app:/app
+
+  celerybeat:
+     build:
+       context: .
+       dockerfile: docker/Dockerfile
+     command: /start-celeryworker
+     env_file:
+       - .env-test
+     volumes:
+     - ./app:/app
+
+  queue:
+    image: rabbitmq:3
+
+  db:
+    image: postgres:12
+    env_file:
+      - .env
+    volumes:
+      - local_postgres_data:/var/lib/postgresql/data
