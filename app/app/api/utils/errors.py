@@ -8,4 +8,6 @@ class NotFoundSchema(BaseModel):
 
 class NotFound(JSONResponse):
     def __init__(self, message="not found"):
-        super().__init__(status_code=404, content=NotFoundSchema(message=message).dict())
+        super().__init__(
+            status_code=404, content=NotFoundSchema(message=message).dict()
+        )

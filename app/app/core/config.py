@@ -2,7 +2,7 @@ import os
 
 
 PROJECT_TITLE = os.getenv("PROJECT_TITLE")
-SERVICE_NAME = 'Korona Pay'
+SERVICE_NAME = "Korona Pay"
 
 POSTGRES_HOST = os.getenv("POSTGRES_HOST")
 POSTGRES_PORT = os.getenv("POSTGRES_PORT")

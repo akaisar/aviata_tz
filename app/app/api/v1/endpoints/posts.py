@@ -23,16 +23,13 @@ def list_posts(
     return posts
 
 
-@router.get("/{post_id}/",
-            response_model=Post,
-            responses={
-                404: {"model": NotFoundSchema}
-            },
-            response_class=UJSONResponse)
-def get_post(
-    post_id: int,
-    db: Session = Depends(get_db)
-):
+@router.get(
+    "/{post_id}/",
+    response_model=Post,
+    responses={404: {"model": NotFoundSchema}},
+    response_class=UJSONResponse,
+)
+def get_post(post_id: int, db: Session = Depends(get_db)):
     post = crud.post.get(db, post_id)
     if not post:
         return NotFound(message="Post not found")

@@ -8,7 +8,7 @@ from app.core.caching import caching
 
 app = FastAPI(title=config.PROJECT_TITLE, openapi_url="/api/v1/openapi.json")
 
-app.include_router(root_router, prefix='/api')
+app.include_router(root_router, prefix="/api")
 
 
 @app.on_event("startup")

@@ -3,11 +3,12 @@ from typing import Callable, Coroutine
 
 
 def force_async(fn: Callable):
-    '''
+    """
     turns a sync function to async function using threads
-    '''
+    """
     from concurrent.futures import ThreadPoolExecutor
     import asyncio
+
     pool = ThreadPoolExecutor()
 
     @functools.wraps(fn)
@@ -19,9 +20,9 @@ def force_async(fn: Callable):
 
 
 def force_sync(fn: Coroutine):
-    '''
+    """
     turns an async function to sync function
-    '''
+    """
     import asyncio
 
     @functools.wraps(fn)
