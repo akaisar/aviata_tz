@@ -16,8 +16,6 @@ router = APIRouter()
 @router.get("/", response_model=List[Ticket], response_class=UJSONResponse)
 def list_(
     db: Session = Depends(get_db),
-    skip: int = 0,
-    limit: int = 100,
 ):
-    tickets = crud.post.get_multi(db, skip=skip, limit=limit)
+    tickets = crud.post.get_multi(db)
     return tickets

@@ -11,9 +11,9 @@ app = FastAPI(title=config.PROJECT_TITLE, openapi_url="/api/v1/openapi.json")
 app.include_router(root_router, prefix="/api")
 
 
-@app.on_event("startup")
-async def startup_event():
-    caching()
+# @app.on_event("startup")
+# async def startup_event():
+#     caching()
 
 
 @app.middleware("http")
