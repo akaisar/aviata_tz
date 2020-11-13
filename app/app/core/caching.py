@@ -113,7 +113,6 @@ def caching():
                 else:
                     if int(ticket["price"]) < int(chipest_ticket["price"]):
                         chipest_ticket = ticket
-            logger.info(f"kek3")
             add_ticket_to_db(ticket=chipest_ticket, date_search=iterator_date)
             print(iterator_date)
             iterator_date += relativedelta(days=1)
