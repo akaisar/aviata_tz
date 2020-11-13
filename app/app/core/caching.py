@@ -1,5 +1,5 @@
 import requests
-from datetime import date
+from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 import calendar
 import json
@@ -21,7 +21,7 @@ iatas = [
 ]
 
 
-def add_ticket_to_db(ticket):
+def add_ticket_to_db(ticket, date_search):
     if session.query(IATA).filter_by(code=ticket["flyFrom"]).count() == 0:
         iata1 = IATA(code=ticket["flyFrom"])
         session.add(iata1)
@@ -33,12 +33,12 @@ def add_ticket_to_db(ticket):
     else:
         iata2 = session.query(IATA).filter_by(code=ticket["flyTo"])[0]
         session.add(iata2)
-    if session.query(Ticket).filter_by(date_search=ticket["date_search"]).count():
+    if session.query(Ticket).filter_by(date_search=date_search).count():
         old_ticket = session.query(Ticket).filter_by(date_search=ticket["date_search"])
         session.delete(old_ticket)
         session.commit()
     new_ticket = Ticket(fly_from=iata1, fly_to=iata2, date_from=ticket["date_from"], date_to=ticket["date_to"],
-                        date_search=ticket["date_search"], booking_token=ticket["booking_token"],
+                        date_search=date_search, booking_token=ticket["booking_token"],
                         price=ticket["price"])
     session.add(new_ticket)
     session.commit()
@@ -59,7 +59,7 @@ def caching():
 
     for iata1, iata2 in iatas:
         while date1 != date2:
-            data = makeRequest(iata1, iata2, date1)
+            data = make_request(iata1, iata2, date1)
             data = data["data"]
             flag = False
             chipest_ticket = {}
@@ -70,11 +70,10 @@ def caching():
                 main_data_in_ticket = {
                     "booking_token": ticket["booking_token"],
                     "price": ticket["price"],
-                    "iata1": ticket["flyFrom"],
-                    "iata2": ticket["flyTo"],
-                    "date_from": ticket["dTime"],
-                    "date_to": ticket["aTime"],
-                    "date_search": date1.strftime('%d/%m/%Y'),
+                    "flyFrom": ticket["flyFrom"],
+                    "flyTo": ticket["flyTo"],
+                    "date_from": datetime.utcfromtimestamp(int(ticket["dTime"])),
+                    "date_to": datetime.utcfromtimestamp(int(ticket["aTime"])),
                 }
                 if not flag:
                     chipest_ticket = main_data_in_ticket
@@ -82,6 +81,6 @@ def caching():
                 else:
                     if int(ticket["price"]) < int(chipest_ticket["price"]):
                         chipest_ticket = ticket
-            add_ticket_to_db(ticket=chipest_ticket)
+            add_ticket_to_db(ticket=chipest_ticket, date_search=date1)
             print(date1)
             date1 += relativedelta(days=1)
