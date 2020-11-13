@@ -13,6 +13,7 @@ services:
       - .env-test
     ports:
     - "8000:80"
+    - "8888:8888"
     volumes:
     - ./app:/app
 
@@ -42,6 +43,6 @@ services:
   db:
     image: postgres:12
     env_file:
-      - .env
+      - .env-test
     volumes:
       - local_postgres_data:/var/lib/postgresql/data
