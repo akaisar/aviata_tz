@@ -17,5 +17,5 @@ router = APIRouter()
 def list_(
     db: Session = Depends(get_db),
 ):
-    tickets = crud.post.get_multi(db)
+    tickets = crud.ticket.get_multi(db)
     return tickets

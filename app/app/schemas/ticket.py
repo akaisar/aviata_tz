@@ -2,10 +2,12 @@ from datetime import datetime, date
 
 from pydantic import BaseModel
 
+from app.schemas.iata import IATABase
+
+from typing import Optional
+
 
 class TicketBase(BaseModel):
-    fly_from: str
-    fly_to: str
     date_from: datetime
     date_to: datetime
     price: int

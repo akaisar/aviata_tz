@@ -30,19 +30,20 @@ def check_ticket(ticket):
         f"https://booking-api.skypicker.com/api/v0.1/check_flights?v=2&booking_token={ticket['booking_token']}&"
         f"pnum=1&bnum=0"
     )
+    logger.info("Wait check info")
     response = requests.get(request).json()
+    logger.info("Check info taken")
     return response
 
 
-def add_ticket_to_db(ticket, date_search):
-    # logger.info(f"Ticket {ticket['booking_token']} start updload to db")
+def add_ticket_to_db(ticket, date_search, iata_from_model, iata_to_model):
     ticket_info = check_ticket(ticket)
     if ticket_info["flights"][0]["invalid"] == 1:
         return
     ticket["price"] = ticket_info["flights_price"]
     new_ticket = Ticket(
-        fly_from=iata1,
-        fly_to=iata2,
+        fly_from=iata_from_model,
+        fly_to=iata_to_model,
         date_from=ticket["date_from"],
         date_to=ticket["date_to"],
         date_search=date_search,
@@ -51,7 +52,6 @@ def add_ticket_to_db(ticket, date_search):
     )
     db_session.add(new_ticket)
     db_session.commit()
-    # logger.info(f"Ticket {ticket['booking_token']} succes updload to db")
 
 
 def add_iata_to_db(iata):
@@ -113,17 +113,13 @@ def caching():
                 else:
                     if int(ticket["price"]) < int(chipest_ticket["price"]):
                         chipest_ticket = ticket
-            add_ticket_to_db(ticket=chipest_ticket, date_search=iterator_date)
+            add_ticket_to_db(
+                ticket=chipest_ticket,
+                date_search=iterator_date,
+                iata_from_model=iata_from_model,
+                iata_to_model=iata_to_model,
+            )
             print(iterator_date)
             iterator_date += relativedelta(days=1)
             logger.info(f"{iterator_date} end caching")
     logger.info("End, caching")
-
-
-@celery_app.task
-def reload_cache():
-    tickets = db_session.query(Ticket).all()
-    for ticket in tickets:
-        db_session.delete(ticket)
-    db_session.commit()
-    caching()
